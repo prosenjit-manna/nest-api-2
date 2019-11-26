@@ -1,12 +1,18 @@
 import { Controller, Get, Post, Param, Body, Put, Delete } from '@nestjs/common';
-import { CreateUserDto } from 'src/dto/create-user.dto';
-import { UserDto } from 'src/dto/user.dto';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { UserDto } from 'src/user/dto/user.dto';
+import { UserService } from './user.service';
+import { User } from './interface/user..interface';
 
 @Controller('user')
 export class UserController {
+  constructor(
+    private userService: UserService,
+  ) {}
+
   @Get()
-  getOneUser(): string {
-    return `Return single user`;
+  getCurrentUser(): User {
+    return this.userService.getCurrentUser();
   }
 
   @Get(':id')
