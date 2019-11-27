@@ -2,7 +2,7 @@ import { ApiModelProperty } from '@nestjs/swagger';
 
 export class CreateUserDto {
   @ApiModelProperty()
-  readonly emailId: string;
+  readonly email: string;
 
   @ApiModelProperty()
   readonly password: string;
