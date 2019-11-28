@@ -9,9 +9,9 @@ import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-    UserModule,
     MongooseModule.forRoot('mongodb://admin:admin123@ds349618.mlab.com:49618/nest-api', {useNewUrlParser: true}),
-    // AuthModule
+    UserModule,
+    AuthModule,
   ],
   controllers: [
     AppController,
