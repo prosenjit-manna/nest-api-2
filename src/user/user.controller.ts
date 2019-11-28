@@ -1,41 +1,59 @@
-import { Controller, Get, Post, Param, Body, Put, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  Body,
+  Put,
+  Delete,
+  NotFoundException,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { ApiUseTags } from '@nestjs/swagger';
 
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
-import { UserDto } from 'src/user/dto/user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UserDto } from './dto/user.dto';
 import { UserService } from './user.service';
 import { User } from './interface/user..interface';
 
 @ApiUseTags('user')
 @Controller('user')
 export class UserController {
-  constructor(
-    private userService: UserService,
-  ) {}
+  constructor(private userService: UserService) {}
 
   @Get()
   getCurrentUser(): User {
-    return this.userService.getCurrentUser();
+    throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
   }
 
   @Get(':id')
-  findOne(@Param() params): string {
-    return `Other user details by id #${params.id}`;
+  findOne(@Param('id') id: string) {
+    return this.userService.findAUser(id);
+  }
+
+  @Post('/find-user')
+  async findUser(@Body() user: UserDto) {
+    const userObject = await this.userService.findAUserByEmail(user.email);
+    if (userObject) {
+      return userObject;
+    } else {
+      throw new NotFoundException();
+    }
   }
 
   @Post()
-  create(@Body() createUser: CreateUserDto ): string {
-    return `User created`;
+  async create(@Body() createUser: CreateUserDto) {
+    return this.userService.createUser(createUser);
   }
 
   @Put()
-  update(@Body() user: UserDto ): string {
-    return `User updated`;
+  async update(@Body() user: UserDto) {
+    return this.userService.editUser(user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return `Delete a user #${id}`;
+  async remove(@Param('id') id: string) {
+    return this.userService.deleteUser(id);
   }
-
 }
