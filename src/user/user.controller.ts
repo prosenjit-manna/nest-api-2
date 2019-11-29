@@ -14,29 +14,33 @@ import {
 } from '@nestjs/common';
 import { ApiUseTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { ExtractJwt } from 'passport-jwt';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserDto } from './dto/user.dto';
 import { UserService } from './user.service';
 import { User } from './interface/user..interface';
+import { AuthService } from 'src/auth/auth.service';
 
 @ApiUseTags('user')
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
 @Controller('user')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private authService: AuthService,
+  ) {}
 
   @Get()
-  getCurrentUser(): User {
-    throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+  getCurrentUser() {
+    return this.authService.currentUser;
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.findAUser(id);
   }
-
 
   @Post('/find-user')
   async findUser(@Body() user: CreateUserDto) {

@@ -5,15 +5,12 @@ import * as bcrypt from 'bcrypt';
 
 import { LoginDto } from './dto/login.dto';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
-import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
-import { UserDto } from 'src/user/dto/user.dto';
 
 @ApiUseTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
-    private readonly userService: UserService,
     private readonly authService: AuthService,
   ) {}
 
@@ -29,7 +26,7 @@ export class AuthController {
       ...user,
       password: await bcrypt.hash(user.password, 12),
     };
-    return this.userService.createUser(userPayload);
+    return this.authService.createUser(userPayload);
   }
 
 }
