@@ -1,25 +1,26 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
-import { ApiUseTags } from '@nestjs/swagger';
+import { Controller, Post, Body, Request, UseGuards, NotFoundException } from '@nestjs/common';
+import { ApiUseTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import * as bcrypt from 'bcrypt';
 
 import { LoginDto } from './dto/login.dto';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UserService } from '../user/user.service';
+import { AuthService } from './auth.service';
+import { UserDto } from 'src/user/dto/user.dto';
 
 @ApiUseTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly userService: UserService,
+    private readonly authService: AuthService,
   ) {}
 
   @UseGuards(AuthGuard('local'))
   @Post('/login')
   async login(@Body() user: LoginDto) {
-    return {
-      success: true,
-    };
+    return this.authService.login(user);
   }
 
   @Post('/sign-up')
