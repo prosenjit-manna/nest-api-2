@@ -1,10 +1,10 @@
-import { Controller, Post, Body, Request, UseGuards, NotFoundException } from '@nestjs/common';
+import { Controller, Post, Body, Request, UseGuards, NotFoundException, Response } from '@nestjs/common';
 import { ApiUseTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import * as bcrypt from 'bcrypt';
 
 import { LoginDto } from './dto/login.dto';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { AuthService } from './auth.service';
 
 @ApiUseTags('auth')
