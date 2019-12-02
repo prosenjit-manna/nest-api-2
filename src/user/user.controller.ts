@@ -11,6 +11,7 @@ import {
   HttpException,
   HttpStatus,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { ApiUseTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -33,8 +34,9 @@ export class UserController {
   ) {}
 
   @Get()
-  getCurrentUser() {
-    return this.authService.currentUser;
+  getCurrentUser(@Req() request) {
+    console.log(request.user);
+    return {};
   }
 
   @Get(':id')
