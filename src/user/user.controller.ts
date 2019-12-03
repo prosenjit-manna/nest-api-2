@@ -31,8 +31,7 @@ export class UserController {
 
   @Get()
   getCurrentUser(@Req() request) {
-    console.log(request.user);
-    return {};
+    return this.userService.findAUser(request.user.id);
   }
 
   @Get(':id')
