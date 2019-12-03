@@ -1,15 +1,23 @@
 import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
-import { UserService } from '../user/user.service';
 import { User } from '../user/interface/user..interface';
+import { CreateUserDto } from './dto/create-user.dto';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UserService) {}
+  currentUser: string;
+
+  constructor(
+    @InjectModel('User') private readonly userModel: Model<User>,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
-    const userModel = await this.usersService.findAUserByEmail(username);
+    const userModel = await this.findAUserByEmail(username);
     let user: User;
     if (!userModel) {
       return null;
@@ -22,5 +30,31 @@ export class AuthService {
       return result;
     }
     return null;
+  }
+
+  async getToken(user: any) {
+    const userData = await this.getCurrentUser(user.email);
+    const payload = { username: user.email, id: userData._id };
+    return {
+      user: userData,
+      access_token: this.jwtService.sign(payload),
+    };
+  }
+
+  async createUser(createUser: CreateUserDto): Promise<User> {
+    const createdUser = new this.userModel(createUser);
+    return await createdUser.save();
+  }
+
+  async findAUserByEmail(email: string): Promise<User> {
+    return await this.userModel.findOne({email}).exec();
+  }
+
+  async getCurrentUser(email: string): Promise<User> {
+   const user =  await this.findAUserByEmail(email);
+   const userData = user.toJSON();
+   delete userData.password;
+
+   return userData;
   }
 }

@@ -4,27 +4,34 @@ import {
   Post,
   Param,
   Body,
+  Request,
   Put,
   Delete,
   NotFoundException,
   HttpException,
   HttpStatus,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
-import { ApiUseTags } from '@nestjs/swagger';
+import { ApiUseTags, ApiBearerAuth } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserDto } from './dto/user.dto';
 import { UserService } from './user.service';
-import { User } from './interface/user..interface';
 
 @ApiUseTags('user')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'))
 @Controller('user')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+  ) {}
 
   @Get()
-  getCurrentUser(): User {
-    throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+  getCurrentUser(@Req() request) {
+    return this.userService.findAUser(request.user.id);
   }
 
   @Get(':id')
@@ -33,7 +40,7 @@ export class UserController {
   }
 
   @Post('/find-user')
-  async findUser(@Body() user: UserDto) {
+  async findUser(@Body() user: CreateUserDto) {
     const userObject = await this.userService.findAUserByEmail(user.email);
     if (userObject) {
       return userObject;
