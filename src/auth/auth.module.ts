@@ -29,6 +29,6 @@ const UserDbModule =  MongooseModule.forFeature([
     UserDbModule,
   ],
   controllers: [ AuthController ],
-  exports: [AuthService, JwtStrategy, JwtStrategy],
+  exports: [AuthService, JwtStrategy],
 })
 export class AuthModule {}

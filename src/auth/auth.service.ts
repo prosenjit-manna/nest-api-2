@@ -33,9 +33,10 @@ export class AuthService {
   }
 
   async getToken(user: any) {
-    const payload = { username: user.email };
+    const userData = await this.getCurrentUser(user.email);
+    const payload = { username: user.email, id: userData._id };
     return {
-      user: await this.getCurrentUser(user.email),
+      user: userData,
       access_token: this.jwtService.sign(payload),
     };
   }
@@ -49,7 +50,7 @@ export class AuthService {
     return await this.userModel.findOne({email}).exec();
   }
 
-  async getCurrentUser(email: string) {
+  async getCurrentUser(email: string): Promise<User> {
    const user =  await this.findAUserByEmail(email);
    const userData = user.toJSON();
    delete userData.password;

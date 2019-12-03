@@ -15,13 +15,10 @@ import {
 } from '@nestjs/common';
 import { ApiUseTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { ExtractJwt } from 'passport-jwt';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserDto } from './dto/user.dto';
 import { UserService } from './user.service';
-import { User } from './interface/user..interface';
-import { AuthService } from 'src/auth/auth.service';
 
 @ApiUseTags('user')
 @ApiBearerAuth()
@@ -30,7 +27,6 @@ import { AuthService } from 'src/auth/auth.service';
 export class UserController {
   constructor(
     private userService: UserService,
-    private authService: AuthService,
   ) {}
 
   @Get()
